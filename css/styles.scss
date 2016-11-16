@@ -1,0 +1,165 @@
+/*
+ * See the Getting Started docs for more information:
+ * http://getbootstrap.com/getting-started/#support-ie10-width
+ */
+@-ms-viewport {
+  width: device-width;
+}
+
+@-o-viewport {
+  width: device-width;
+}
+
+@viewport {
+  width: device-width;
+}
+
+// CUSTOM MIXINS AND FUNCTIONS.
+$breakpoint_tablet: 768px;
+$breakpoint_desktop: 992px;
+$breakpoint_desktop_large: 1200px;
+
+/// Remove the unit of a length
+/// @param {Number} $number - Number to remove unit from
+/// @return {Number} - Unitless number
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+
+  @return $number;
+}
+
+@function sqrt($r) {
+  $x0: 1;
+  $x1: $x0;
+
+  @for $i from 1 through 10 {
+    $x1: $x0 - ($x0 * $x0 - abs($r)) / (2 * $x0);
+    $x0: $x1;
+  }
+
+  @return $x1;
+}
+
+//
+// Breakpoint.
+//
+@mixin breakpoint($class) {
+  @if $class==tablet {
+    @media (min-width: $breakpoint_tablet) {
+      @content;
+    }
+  } @else if $class == desktop {
+    @media (min-width: $breakpoint_desktop) {
+      @content;
+    }
+  } @else if $class == desktop_large {
+    @media (min-width: $breakpoint_desktop_large) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint mixin supports: tablet, desktop, desktop_large";
+
+  }
+}
+
+// CUSTOM STYLES.
+
+.logo {
+  max-width: 50vw;
+  display: block;
+  margin: 0 auto;
+}
+
+.jumbotron {
+  margin-top: 30px;
+  p {
+    &.lead {
+      text-align: center;
+      margin-top: 4vw;
+      @include breakpoint (tablet) {
+        font-size: 4vw;
+      }
+    }
+  }
+}
+
+.section-title {
+  text-align: center;
+  @include breakpoint (tablet) {
+    font-size: 3vw;
+  }
+}
+
+.intro {
+  p {
+    font-size: 1.3em;
+  }
+  blockquote {
+    font-style: italic;
+  }
+}
+
+.cta {
+  text-align: center;
+  font-size: 1.3em;
+}
+
+.sidebar {
+  .nav {
+    & > li {
+      & > a {
+        display: block;
+        padding: 4px 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #767676;
+      }
+    }
+  }
+}
+
+footer {
+  .twitter-follow-button {
+    vertical-align: middle;
+  }
+}
+
+// Add ribbon.
+$ribbonBg: #2071b9;
+$ribbonWidth: 210px;
+$ribbonHeight: 31px;
+$ribbonFontSize: 15px;
+$ribbonLineHeight: 140%;
+$wrapperWidth: sqrt(strip-unit(($ribbonWidth)*($ribbonWidth))/2) * 1px + $ribbonHeight;
+.ribbon-wrapper-green {
+  width: $wrapperWidth;
+  height: $wrapperWidth;
+  overflow: hidden;
+  position: absolute;
+  top: -1 * ($ribbonHeight - $ribbonFontSize*strip-unit($ribbonLineHeight)/100) / 2;
+  right: 0;
+  display: none;
+  @include breakpoint (tablet) {
+    display: block;
+  }
+}
+
+.ribbon-green {
+  font-weight: bold;
+  font-size: $ribbonFontSize;
+  color: #ffffff;
+  text-align: center;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  position: relative;
+  padding: 7px 0;
+  left: $ribbonHeight/2;
+  top: $ribbonHeight + $ribbonHeight/2;
+  width: $ribbonWidth;
+  background-color: $ribbonBg;
+}
