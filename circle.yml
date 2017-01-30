@@ -10,4 +10,4 @@ deployment:
   prod:
     branch: master
     commands:
-    - ssh $DEPLOY_USER@$DEPLOY_HOST -p $DEPLOY_PORT cd $DEPLOY_DIR; git reset --hard; git clean -fd; git pull origin master
+    - ssh $DEPLOY_USER@$DEPLOY_HOST -p $DEPLOY_PORT "cd $DEPLOY_DIR && git reset --hard && git clean -fd && git fetch origin && git pull origin master"
