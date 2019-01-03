@@ -153,7 +153,7 @@
         <li>Inter-project independence: avoid situations when installing components to work with one project may break components for another project.</li>
         <li>Re-use for other projects.</li>
       </ul>
-      <p>Beetbox project (https://github.com/beetboxvm/beetbox) satisfies all requirements from the list above and provides a start point for a pre-provisioned L*MP Virtual Machine that can be used for local development environment.</p>
+      <p>We are using <a href="https://drupal-dev.io">Drupal-Dev</a> for local development and CI integration</p>
 
       <h2 id="automated-builds">Automated builds</h2>
       <p>Before feature changes can be merged into a shared mainline, a complete build must run and pass all tests on automated builds server. It is usually setup to import latest backup from production environment into fully built codebase and run code linting and tests. However, it is also a good approach to setup automated builds with a minimal configuration of code linting to kick-start any projects ‒ this does not require as much time as configuring DB import and testing frameworks (especially when tests may not yet exist).</p>
