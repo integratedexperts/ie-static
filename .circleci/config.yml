@@ -1,0 +1,56 @@
+version: 2
+
+
+aliases:
+  # Variables.
+  # For YAML support of anchors and references, @see http://blog.daemonl.com/2016/02/yaml.html
+
+  # SSH key fingerprint to deploy code. Add private key of the user who is
+  # allowed to push to $DEPLOY_REMOTE repo under "SSH Permissions" in
+  # CircleCI UI.
+  # [META]
+  # This is a fingerprint of the key to push Drupal-Dev project itself.
+  # Replace this key fingerprint with your own.
+  # [/META]
+  - &deploy_ssh_fingerprint "ab:46:be:77:93:cc:8f:9c:21:eb:01:12:34:3d:69:d3"
+
+  - &step_configure_ssh
+    run:
+      name: Configure SSH
+      command: |
+        mkdir -p ${HOME}/.ssh/ && echo -e "Host *\n\tStrictHostKeyChecking no\n" > ${HOME}/.ssh/config
+        DEPLOY_SSH_FILE="${DEPLOY_SSH_FINGERPRINT//:}" && DEPLOY_SSH_FILE="${HOME}/.ssh/id_rsa_${DEPLOY_SSH_FILE//\"}"
+        if [ -f "${DEPLOY_SSH_FILE}" ]; then
+          echo "Found Deploy SSH key file ${DEPLOY_SSH_FILE}"
+          ssh-add -D
+          ssh-add ${DEPLOY_SSH_FILE}
+        fi
+
+jobs:
+  build:
+    working_directory: /app
+    docker:
+        - image: integratedexperts/ci-builder
+          environment:
+            DEPLOY_SSH_FINGERPRINT: *deploy_ssh_fingerprint
+    steps:
+      - checkout
+      - run: test -f index.html
+      - add_ssh_keys:
+          fingerprints:
+            - *deploy_ssh_fingerprint
+      - *step_configure_ssh
+      - run: ssh $DEPLOY_USER@$DEPLOY_HOST -p $DEPLOY_PORT "cd $DEPLOY_DIR && git reset --hard && git clean -fd && git fetch origin && git pull origin master"
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+            tags:
+              ignore: /.*/
